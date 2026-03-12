@@ -282,19 +282,25 @@ export default function Home() {
           SELAMAT DATANG DI PREDIKTORAI - LANDING PAGE SIAP PAKAI
         </div>
 
-        {/* Banner - Placeholder */}
-        {/* Banner dengan gambar dari Imgur */}
+        {/* Banner - dengan tag img biasa */}
 <div className="hologram-frame">
   <div className="scanline"></div>
-  <div style={{ position: 'relative', width: '100%', height: '300px' }}>
-    <Image 
-      src="https://i.ibb.co.com/SwnWkqXn/IMG-20260309-WA0007.jpg" // GANTI DENGAN TAUTAN ANDA
-      alt="Banner PrediktorAI"
-      layout="fill"
-      objectFit="cover"
-      priority
-    />
-  </div>
+  <img 
+    src="https://i.ibb.co.com/SwnWkqXn/IMG-20260309-WA0007.jpg" 
+    alt="Banner PrediktorAI"
+    style={{
+      width: '100%',
+      height: '300px',
+      objectFit: 'cover',
+      display: 'block'
+    }}
+    // Fallback jika gambar gagal dimuat
+    onError={(e) => {
+      e.target.onerror = null;
+      e.target.src = 'https://via.placeholder.com/320x300?text=Banner+PrediktorAI';
+      e.target.style.objectFit = 'contain';
+    }}
+  />
 </div>
 
         {/* Tombol About & Contact */}
