@@ -283,12 +283,19 @@ export default function Home() {
         </div>
 
         {/* Banner - Placeholder */}
-        <div className="hologram-frame">
-          <div className="scanline"></div>
-          <div className="banner-placeholder">
-            BANNER
-          </div>
-        </div>
+        {/* Banner dengan gambar dari Imgur */}
+<div className="hologram-frame">
+  <div className="scanline"></div>
+  <div style={{ position: 'relative', width: '100%', height: '300px' }}>
+    <Image 
+      src="https://i.imgur.com/tZUTlO4.jpeg" // GANTI DENGAN TAUTAN ANDA
+      alt="Banner PrediktorAI"
+      layout="fill"
+      objectFit="cover"
+      priority
+    />
+  </div>
+</div>
 
         {/* Tombol About & Contact */}
         <div className="main-btn-grid">
