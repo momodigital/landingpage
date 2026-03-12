@@ -1,112 +1,315 @@
 import Head from 'next/head'
-import { useState } from 'react'
+import Image from 'next/image'
 
 export default function Home() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <Head>
-        <title>LandingPage | MomoDigital</title>
-        <meta name="description" content="Landing page keren dari MomoDigital" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>" />
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>PrediktorAI - Landing Page</title>
+        <meta name="description" content="PrediktorAI landing page" />
+        <meta name="robots" content="index,follow" />
+        <link rel="canonical" href="#" />
       </Head>
 
-      <div style={{
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-        margin: 0,
-        padding: 0,
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        color: 'white'
-      }}>
-        {/* Header */}
-        <header style={{
-          padding: '20px',
-          textAlign: 'center',
-          borderBottom: '1px solid rgba(255,255,255,0.1)'
-        }}>
-          <h1 style={{ margin: 0, fontSize: '2.5rem' }}>🚀 MomoDigital</h1>
-          <p style={{ opacity: 0.9 }}>Landing Page Next.js</p>
-        </header>
+      <style jsx>{`
+        body {
+          background: #000;
+          color: #fff;
+          font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-image: radial-gradient(circle, #111 10%, #000 90%);
+        }
 
-        {/* Hero Section */}
-        <main style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '60px 20px',
-          textAlign: 'center'
-        }}>
-          <h2 style={{ fontSize: '3rem', marginBottom: '20px' }}>
-            Selamat Datang di Landing Page Saya
-          </h2>
-          <p style={{ fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto 40px', opacity: 0.9 }}>
-            Ini adalah landing page sederhana dengan Next.js yang sudah terhubung ke GitHub dan siap deploy ke Vercel.
-          </p>
+        .container {
+          max-width: 450px;
+          margin: 0 auto;
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
 
-          {/* Tombol Interaktif */}
-          <button
-            onClick={() => setCount(count + 1)}
-            style={{
-              backgroundColor: 'white',
-              color: '#764ba2',
-              border: 'none',
-              padding: '15px 30px',
-              fontSize: '1.1rem',
-              borderRadius: '50px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              transition: 'transform 0.2s',
-              boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-            }}
-            onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-          >
-            Klik Saya! {count > 0 && `(${count})`}
-          </button>
+        .logo-wrap { 
+          margin-bottom: 20px; 
+          text-align: center; 
+        }
 
-          {/* Cards Section */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '30px',
-            marginTop: '60px'
+        .welcome { 
+          text-align: center; 
+          margin-bottom: 15px; 
+        }
+        
+        .welcome h1 {
+          font-size: 11px;
+          color: #00ff2a;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin: 0;
+        }
+
+        .hologram-frame {
+          position: relative;
+          width: 100%;
+          max-width: 320px;
+          margin-bottom: 25px;
+          border: 1px solid #15ff00;
+          background: #000;
+          padding: 3px;
+          box-shadow: 0 0 15px rgb(9, 255, 0);
+          border-radius: 8px;
+          overflow: hidden;
+        }
+
+        .scanline {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background: #ffffff;
+          z-index: 10;
+          animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+          0% { transform: translateY(0); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateY(300px); opacity: 0; }
+        }
+
+        .main-btn-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+          width: 100%;
+          margin-bottom: 15px;
+        }
+
+        .btn-main {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 13px 0;
+          text-align: center;
+          font-weight: bold;
+          font-size: 14px;
+          text-decoration: none;
+          color: #fff;
+          text-transform: uppercase;
+          border-radius: 6px;
+          transition: 0.3s;
+        }
+
+        .btn-about { 
+          border: 2px solid #01fd01; 
+          background: #ffffff00; 
+          color: #01fd01; 
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0); 
+        }
+        
+        .btn-contact { 
+          border: 2px solid #01fd01; 
+          color: #01fd01; 
+          background: rgba(0, 0, 0, 0.05); 
+        }
+
+        .sub-menu-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 10px;
+          width: 100%;
+          margin-bottom: 30px;
+        }
+
+        .btn-sub {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 12px 5px;
+          background: rgba(0, 0, 0, 0);
+          border: 1px solid #01fd01;
+          border-radius: 6px;
+          text-decoration: none;
+          color: #01fd01;
+          font-size: 10px;
+          font-weight: bold;
+        }
+
+        .btn-sub:hover { 
+          border-color: #01fd01; 
+          color: #01fd01; 
+        }
+
+        .icon-svg { 
+          width: 22px; 
+          height: 22px; 
+          margin-bottom: 5px; 
+          fill: #01fd01; 
+        }
+        
+        .icon-main { 
+          width: 18px; 
+          height: 18px; 
+          fill: currentColor; 
+        }
+
+        .running-text {
+          width: 100%;
+          background: rgb(0, 0, 0);
+          border: 1px solid #00f511;
+          padding: 7px;
+          margin-bottom: 20px;
+          font-size: 11px;
+          color: #0af802;
+          text-align: center;
+          font-weight: bold;
+          border-radius: 4px;
+          position: relative;
+          overflow: hidden;
+          text-shadow: 2px 0 #000000;
+          animation: cyber-glitch 0.2s infinite;
+        }
+
+        @keyframes cyber-glitch {
+          0% { transform: translate(0); text-shadow: 2px 0 #000000; }
+          5% { transform: translate(-2px, 1px); text-shadow: -2px 0 #000000; }
+          10% { transform: translate(2px, -1px); clip-path: inset(10% 0 30% 0); }
+          15% { transform: translate(-1px, 2px); clip-path: inset(40% 0 10% 0); }
+          20% { transform: translate(0); clip-path: none; text-shadow: 2px 0 #000000; }
+          100% { transform: translate(0); }
+        }
+
+        .running-text::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 2px);
+          pointer-events: none;
+        }
+
+        .footer-text { 
+          font-size: 10px; 
+          color: #ffffff; 
+          text-align: center; 
+        }
+        
+        .footer-text a { 
+          color: #00ff0d; 
+          text-decoration: none; 
+        }
+
+        .image-container {
+          position: relative;
+          width: 100%;
+          height: auto;
+        }
+      `}</style>
+
+      <div className="container">
+        {/* Logo - Placeholder untuk diganti nanti */}
+        <div className="logo-wrap">
+          <a href="#" rel="noopener noreferrer" target="_blank">
+            <div style={{ 
+              position: 'relative', 
+              width: '200px', 
+              height: '60px',
+              background: '#1a1a1a',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid #00ff00',
+              color: '#00ff00',
+              fontSize: '20px',
+              fontWeight: 'bold'
+            }}>
+              LOGO
+            </div>
+          </a>
+        </div>
+
+        {/* Welcome Text - Diubah jadi PrediktorAI */}
+        <div className="welcome">
+          <h1>
+            PREDIKTORAI ✈️ Landing Page Siap Diisi dengan Link Anda
+          </h1>
+        </div>
+
+        {/* Running Text */}
+        <div className="running-text">
+          SELAMAT DATANG DI PREDIKTORAI - LANDING PAGE SIAP PAKAI
+        </div>
+
+        {/* Banner - Bisa diganti nanti */}
+        <div className="hologram-frame">
+          <div className="scanline"></div>
+          <div style={{ 
+            position: 'relative', 
+            width: '100%', 
+            height: '300px',
+            background: 'linear-gradient(45deg, #00ff00, #0000ff)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            fontSize: '24px',
+            fontWeight: 'bold'
           }}>
-            {[
-              { emoji: '⚡', title: 'Cepat', desc: 'Dioptimasi dengan Next.js untuk performa maksimal' },
-              { emoji: '📱', title: 'Responsif', desc: 'Tampil sempurna di semua perangkat' },
-              { emoji: '🔍', title: 'SEO Friendly', desc: 'Mudah ditemukan di mesin pencari' },
-              { emoji: '🚀', title: 'Auto Deploy', desc: 'Update otomatis via GitHub + Vercel' }
-            ].map((item, index) => (
-              <div key={index} style={{
-                backgroundColor: 'rgba(255,255,255,0.1)',
-                backdropFilter: 'blur(10px)',
-                padding: '30px',
-                borderRadius: '15px',
-                border: '1px solid rgba(255,255,255,0.2)'
-              }}>
-                <div style={{ fontSize: '3rem', marginBottom: '15px' }}>{item.emoji}</div>
-                <h3 style={{ marginBottom: '10px' }}>{item.title}</h3>
-                <p style={{ opacity: 0.8 }}>{item.desc}</p>
-              </div>
-            ))}
+            BANNER
           </div>
-        </main>
+        </div>
+
+        {/* Tombol About & Contact (menggantikan Login & Daftar) */}
+        <div className="main-btn-grid">
+          <a href="#" rel="noopener noreferrer" target="_blank" className="btn-main btn-about">
+            <svg className="icon-main" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+            </svg>
+            ABOUT
+          </a>
+          <a href="#" rel="noopener noreferrer" target="_blank" className="btn-main btn-contact">
+            <svg className="icon-main" viewBox="0 0 24 24">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+            </svg>
+            CONTACT
+          </a>
+        </div>
+
+        {/* Sub Menu Grid - Link Resmi diganti jadi Link */}
+        <div className="sub-menu-grid">
+          <a href="#" rel="noopener noreferrer" target="_blank" className="btn-sub">
+            <svg className="icon-svg" viewBox="0 0 24 24">
+              <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1 0 1.71-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z" />
+            </svg>
+            <span>LINK</span>
+          </a>
+          <a href="#" rel="noopener noreferrer" target="_blank" className="btn-sub">
+            <svg className="icon-svg" viewBox="0 0 24 24">
+              <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />
+            </svg>
+            <span>PREDIKSI</span>
+          </a>
+          <a href="#" rel="noopener noreferrer" target="_blank" className="btn-sub">
+            <svg className="icon-svg" viewBox="0 0 24 24">
+              <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
+            </svg>
+            <span>LIVECHAT</span>
+          </a>
+        </div>
 
         {/* Footer */}
-        <footer style={{
-          textAlign: 'center',
-          padding: '30px',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-          marginTop: '40px'
-        }}>
-          <p>© 2024 MomoDigital. Dibuat dengan ❤️ untuk landing page pertama</p>
-          <p style={{ opacity: 0.7, fontSize: '0.9rem' }}>
-            Repository: github.com/momodigital/landingpage
-          </p>
-        </footer>
+        <p className="footer-text">
+          © 2026 • 
+          <a href="#" rel="noopener noreferrer" target="_blank"> PREDIKTORAI </a>
+          • ALL RIGHTS RESERVED
+        </p>
       </div>
     </>
   )
-                     }
+}
