@@ -288,7 +288,7 @@ export default function Home() {
   <div className="scanline"></div>
   <div style={{ position: 'relative', width: '100%', height: '300px' }}>
     <Image 
-      src="https://i.imgur.com/tZUTlO4.jpeg" // GANTI DENGAN TAUTAN ANDA
+      src="https://i.imgur.com/lXcc47t.jpeg" // GANTI DENGAN TAUTAN ANDA
       alt="Banner PrediktorAI"
       layout="fill"
       objectFit="cover"
