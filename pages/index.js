@@ -13,7 +13,8 @@ export default function Home() {
         <link rel="canonical" href="#" />
       </Head>
 
-      <style jsx>{`
+      {/* CSS Global untuk Background Hitam */}
+      <style jsx global>{`
         body {
           background: #000;
           color: #fff;
@@ -21,8 +22,15 @@ export default function Home() {
           margin: 0;
           padding: 0;
           background-image: radial-gradient(circle, #111 10%, #000 90%);
+          min-height: 100vh;
         }
+        
+        * {
+          box-sizing: border-box;
+        }
+      `}</style>
 
+      <style jsx>{`
         .container {
           max-width: 450px;
           margin: 0 auto;
@@ -35,6 +43,21 @@ export default function Home() {
         .logo-wrap { 
           margin-bottom: 20px; 
           text-align: center; 
+        }
+
+        .logo-placeholder {
+          position: relative;
+          width: 200px;
+          height: 60px;
+          background: #1a1a1a;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid #00ff00;
+          color: #00ff00;
+          font-size: 20px;
+          font-weight: bold;
+          text-decoration: none;
         }
 
         .welcome { 
@@ -80,6 +103,20 @@ export default function Home() {
           100% { transform: translateY(300px); opacity: 0; }
         }
 
+        .banner-placeholder {
+          position: relative;
+          width: 100%;
+          height: 300px;
+          background: linear-gradient(45deg, #006600, #000066);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          font-size: 24px;
+          font-weight: bold;
+          text-shadow: 0 0 10px #00ff00;
+        }
+
         .main-btn-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -102,19 +139,29 @@ export default function Home() {
           text-transform: uppercase;
           border-radius: 6px;
           transition: 0.3s;
+          cursor: pointer;
         }
 
         .btn-about { 
           border: 2px solid #01fd01; 
-          background: #ffffff00; 
+          background: transparent; 
           color: #01fd01; 
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0); 
+        }
+        
+        .btn-about:hover {
+          background: rgba(1, 253, 1, 0.1);
+          box-shadow: 0 0 15px #01fd01;
         }
         
         .btn-contact { 
           border: 2px solid #01fd01; 
           color: #01fd01; 
-          background: rgba(0, 0, 0, 0.05); 
+          background: transparent;
+        }
+        
+        .btn-contact:hover {
+          background: rgba(1, 253, 1, 0.1);
+          box-shadow: 0 0 15px #01fd01;
         }
 
         .sub-menu-grid {
@@ -130,18 +177,22 @@ export default function Home() {
           flex-direction: column;
           align-items: center;
           padding: 12px 5px;
-          background: rgba(0, 0, 0, 0);
+          background: transparent;
           border: 1px solid #01fd01;
           border-radius: 6px;
           text-decoration: none;
           color: #01fd01;
           font-size: 10px;
           font-weight: bold;
+          transition: 0.3s;
+          cursor: pointer;
         }
 
         .btn-sub:hover { 
           border-color: #01fd01; 
-          color: #01fd01; 
+          color: #01fd01;
+          background: rgba(1, 253, 1, 0.1);
+          box-shadow: 0 0 10px #01fd01;
         }
 
         .icon-svg { 
@@ -159,7 +210,7 @@ export default function Home() {
 
         .running-text {
           width: 100%;
-          background: rgb(0, 0, 0);
+          background: transparent;
           border: 1px solid #00f511;
           padding: 7px;
           margin-bottom: 20px;
@@ -202,39 +253,24 @@ export default function Home() {
         
         .footer-text a { 
           color: #00ff0d; 
-          text-decoration: none; 
+          text-decoration: none;
+          transition: 0.3s;
         }
-
-        .image-container {
-          position: relative;
-          width: 100%;
-          height: auto;
+        
+        .footer-text a:hover {
+          text-shadow: 0 0 8px #00ff0d;
         }
       `}</style>
 
       <div className="container">
-        {/* Logo - Placeholder untuk diganti nanti */}
+        {/* Logo - Placeholder */}
         <div className="logo-wrap">
-          <a href="#" rel="noopener noreferrer" target="_blank">
-            <div style={{ 
-              position: 'relative', 
-              width: '200px', 
-              height: '60px',
-              background: '#1a1a1a',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid #00ff00',
-              color: '#00ff00',
-              fontSize: '20px',
-              fontWeight: 'bold'
-            }}>
-              LOGO
-            </div>
+          <a href="#" rel="noopener noreferrer" target="_blank" className="logo-placeholder">
+            LOGO
           </a>
         </div>
 
-        {/* Welcome Text - Diubah jadi PrediktorAI */}
+        {/* Welcome Text */}
         <div className="welcome">
           <h1>
             PREDIKTORAI ✈️ Landing Page Siap Diisi dengan Link Anda
@@ -246,26 +282,15 @@ export default function Home() {
           SELAMAT DATANG DI PREDIKTORAI - LANDING PAGE SIAP PAKAI
         </div>
 
-        {/* Banner - Bisa diganti nanti */}
+        {/* Banner - Placeholder */}
         <div className="hologram-frame">
           <div className="scanline"></div>
-          <div style={{ 
-            position: 'relative', 
-            width: '100%', 
-            height: '300px',
-            background: 'linear-gradient(45deg, #00ff00, #0000ff)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontSize: '24px',
-            fontWeight: 'bold'
-          }}>
+          <div className="banner-placeholder">
             BANNER
           </div>
         </div>
 
-        {/* Tombol About & Contact (menggantikan Login & Daftar) */}
+        {/* Tombol About & Contact */}
         <div className="main-btn-grid">
           <a href="#" rel="noopener noreferrer" target="_blank" className="btn-main btn-about">
             <svg className="icon-main" viewBox="0 0 24 24">
@@ -281,7 +306,7 @@ export default function Home() {
           </a>
         </div>
 
-        {/* Sub Menu Grid - Link Resmi diganti jadi Link */}
+        {/* Sub Menu Grid */}
         <div className="sub-menu-grid">
           <a href="#" rel="noopener noreferrer" target="_blank" className="btn-sub">
             <svg className="icon-svg" viewBox="0 0 24 24">
