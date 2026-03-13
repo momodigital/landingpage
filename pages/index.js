@@ -1,7 +1,63 @@
 import Head from 'next/head'
-import Image from 'next/image'
+import { useState, useRef, useEffect } from 'react'
 
 export default function Home() {
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const [messages, setMessages] = useState([
+    { text: 'Halo! Ada yang bisa saya bantu?', isUser: false }
+  ])
+  const [inputMessage, setInputMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const chatEndRef = useRef(null)
+
+  // Auto scroll ke pesan terbaru
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  // Fungsi untuk mendapatkan respons AI (simulasi dulu)
+  const getAIResponse = async (userMessage) => {
+  try {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyDqpzPrzX_22v6gPtysMv9H9foAQB633G0', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: userMessage
+          }]
+        }]
+      })
+    })
+
+    const data = await response.json()
+    return data.candidates[0].content.parts[0].text
+  } catch (error) {
+    console.error('Error:', error)
+    return 'Maaf, terjadi kesalahan. Silakan coba lagi.'
+  }
+}
+
+  const handleSendMessage = async (e) => {
+    e?.preventDefault()
+    if (!inputMessage.trim() || isLoading) return
+
+    // Tambah pesan user
+    const userMessage = inputMessage
+    setMessages(prev => [...prev, { text: userMessage, isUser: true }])
+    setInputMessage('')
+    setIsLoading(true)
+
+    // Dapatkan respons AI
+    const aiResponse = await getAIResponse(userMessage)
+    
+    // Tambah respons AI
+    setMessages(prev => [...prev, { text: aiResponse, isUser: false }])
+    setIsLoading(false)
+  }
+
   return (
     <>
       <Head>
@@ -38,6 +94,7 @@ export default function Home() {
           display: flex;
           flex-direction: column;
           align-items: center;
+          position: relative;
         }
 
         .logo-wrap { 
@@ -195,6 +252,11 @@ export default function Home() {
           box-shadow: 0 0 10px #01fd01;
         }
 
+        .btn-sub.active {
+          background: rgba(1, 253, 1, 0.2);
+          box-shadow: 0 0 15px #01fd01;
+        }
+
         .icon-svg { 
           width: 22px; 
           height: 22px; 
@@ -260,6 +322,286 @@ export default function Home() {
         .footer-text a:hover {
           text-shadow: 0 0 8px #00ff0d;
         }
+
+        /* Chat Widget Styles */
+        .chat-widget {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          z-index: 1000;
+        }
+
+        .chat-button {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #00ff00, #00cc00);
+          border: 2px solid #fff;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3);
+          transition: all 0.3s ease;
+          animation: pulse 2s infinite;
+        }
+
+        .chat-button:hover {
+          transform: scale(1.1);
+          box-shadow: 0 6px 20px rgba(0, 255, 0, 0.5);
+        }
+
+        @keyframes pulse {
+          0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.4); }
+          70% { box-shadow: 0 0 0 15px rgba(0, 255, 0, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+        }
+
+        .chat-icon {
+          width: 30px;
+          height: 30px;
+          fill: #000;
+        }
+
+        .chat-box {
+          position: fixed;
+          bottom: 90px;
+          right: 20px;
+          width: 350px;
+          height: 500px;
+          background: #111;
+          border: 2px solid #00ff00;
+          border-radius: 15px;
+          box-shadow: 0 5px 30px rgba(0, 255, 0, 0.2);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .chat-header {
+          background: linear-gradient(135deg, #00ff00, #00cc00);
+          padding: 15px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid #333;
+        }
+
+        .chat-header h3 {
+          color: #000;
+          margin: 0;
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        .close-button {
+          background: none;
+          border: none;
+          color: #000;
+          font-size: 24px;
+          cursor: pointer;
+          padding: 0;
+          width: 30px;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: 0.3s;
+        }
+
+        .close-button:hover {
+          background: rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-messages {
+          flex: 1;
+          overflow-y: auto;
+          padding: 15px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .message {
+          max-width: 80%;
+          padding: 10px 15px;
+          border-radius: 15px;
+          font-size: 14px;
+          line-height: 1.4;
+          word-wrap: break-word;
+          animation: messagePop 0.3s ease;
+        }
+
+        @keyframes messagePop {
+          from {
+            opacity: 0;
+            transform: scale(0.8);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .user-message {
+          background: linear-gradient(135deg, #00ff00, #00cc00);
+          color: #000;
+          align-self: flex-end;
+          border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+          background: #222;
+          color: #00ff00;
+          align-self: flex-start;
+          border-bottom-left-radius: 5px;
+          border: 1px solid #00ff00;
+        }
+
+        .chat-input-form {
+          display: flex;
+          padding: 15px;
+          gap: 10px;
+          border-top: 1px solid #333;
+          background: #111;
+        }
+
+        .chat-input {
+          flex: 1;
+          padding: 10px;
+          border: 1px solid #333;
+          border-radius: 20px;
+          background: #222;
+          color: #fff;
+          font-size: 14px;
+          outline: none;
+          transition: 0.3s;
+        }
+
+        .chat-input:focus {
+          border-color: #00ff00;
+          box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+
+        .chat-input:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .send-button {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #00ff00;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: 0.3s;
+        }
+
+        .send-button:hover:not(:disabled) {
+          transform: scale(1.1);
+          box-shadow: 0 0 15px #00ff00;
+        }
+
+        .send-button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .send-icon {
+          width: 20px;
+          height: 20px;
+          fill: #000;
+        }
+
+        .typing-indicator {
+          display: flex;
+          gap: 5px;
+          padding: 10px 15px;
+          background: #222;
+          border-radius: 15px;
+          align-self: flex-start;
+          border: 1px solid #00ff00;
+        }
+
+        .typing-indicator span {
+          width: 8px;
+          height: 8px;
+          background: #00ff00;
+          border-radius: 50%;
+          animation: typing 1s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+          0%, 60%, 100% {
+            transform: translateY(0);
+          }
+          30% {
+            transform: translateY(-10px);
+          }
+        }
+
+        .message-time {
+          font-size: 10px;
+          color: #666;
+          margin-top: 5px;
+          text-align: right;
+        }
+
+        .bot-message .message-time {
+          color: #00ff00;
+          opacity: 0.7;
+        }
+
+        /* Overlay untuk mobile */
+        .chat-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 999;
+          display: none;
+        }
+
+        @media (max-width: 480px) {
+          .chat-box {
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            right: 0;
+            border-radius: 0;
+          }
+          
+          .chat-overlay {
+            display: block;
+          }
+        }
       `}</style>
 
       <div className="container">
@@ -283,25 +625,24 @@ export default function Home() {
         </div>
 
         {/* Banner - dengan tag img biasa */}
-<div className="hologram-frame">
-  <div className="scanline"></div>
-  <img 
-    src="https://i.ibb.co.com/SwnWkqXn/IMG-20260309-WA0007.jpg" 
-    alt="Banner PrediktorAI"
-    style={{
-      width: '100%',
-      height: '300px',
-      objectFit: 'cover',
-      display: 'block'
-    }}
-    // Fallback jika gambar gagal dimuat
-    onError={(e) => {
-      e.target.onerror = null;
-      e.target.src = 'https://via.placeholder.com/320x300?text=Banner+PrediktorAI';
-      e.target.style.objectFit = 'contain';
-    }}
-  />
-</div>
+        <div className="hologram-frame">
+          <div className="scanline"></div>
+          <img 
+            src="https://i.ibb.co.com/SwnWkqXn/IMG-20260309-WA0007.jpg" 
+            alt="Banner PrediktorAI"
+            style={{
+              width: '100%',
+              height: '300px',
+              objectFit: 'cover',
+              display: 'block'
+            }}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://via.placeholder.com/320x300?text=Banner+PrediktorAI';
+              e.target.style.objectFit = 'contain';
+            }}
+          />
+        </div>
 
         {/* Tombol About & Contact */}
         <div className="main-btn-grid">
@@ -327,17 +668,26 @@ export default function Home() {
             </svg>
             <span>LINK</span>
           </a>
+          <a 
+            href="#" 
+            rel="noopener noreferrer" 
+            target="_blank" 
+            className={`btn-sub ${isChatOpen ? 'active' : ''}`}
+            onClick={(e) => {
+              e.preventDefault()
+              setIsChatOpen(true)
+            }}
+          >
+            <svg className="icon-svg" viewBox="0 0 24 24">
+              <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
+            </svg>
+            <span>LIVECHAT</span>
+          </a>
           <a href="#" rel="noopener noreferrer" target="_blank" className="btn-sub">
             <svg className="icon-svg" viewBox="0 0 24 24">
               <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />
             </svg>
             <span>PREDIKSI</span>
-          </a>
-          <a href="#" rel="noopener noreferrer" target="_blank" className="btn-sub">
-            <svg className="icon-svg" viewBox="0 0 24 24">
-              <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
-            </svg>
-            <span>LIVECHAT</span>
           </a>
         </div>
 
@@ -347,6 +697,70 @@ export default function Home() {
           <a href="#" rel="noopener noreferrer" target="_blank"> PREDIKTORAI </a>
           • ALL RIGHTS RESERVED
         </p>
+      </div>
+
+      {/* Chat Widget */}
+      <div className="chat-widget">
+        {!isChatOpen && (
+          <div className="chat-button" onClick={() => setIsChatOpen(true)}>
+            <svg className="chat-icon" viewBox="0 0 24 24">
+              <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" />
+            </svg>
+          </div>
+        )}
+
+        {isChatOpen && (
+          <>
+            <div className="chat-overlay" onClick={() => setIsChatOpen(false)} />
+            <div className="chat-box">
+              <div className="chat-header">
+                <h3>🤖 AI Assistant</h3>
+                <button className="close-button" onClick={() => setIsChatOpen(false)}>×</button>
+              </div>
+
+              <div className="chat-messages">
+                {messages.map((msg, index) => (
+                  <div key={index}>
+                    <div className={`message ${msg.isUser ? 'user-message' : 'bot-message'}`}>
+                      {msg.text}
+                    </div>
+                    <div className="message-time">
+                      {new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+                ))}
+                {isLoading && (
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+
+              <form className="chat-input-form" onSubmit={handleSendMessage}>
+                <input
+                  type="text"
+                  className="chat-input"
+                  placeholder="Ketik pesan..."
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  disabled={isLoading}
+                />
+                <button 
+                  type="submit" 
+                  className="send-button"
+                  disabled={isLoading || !inputMessage.trim()}
+                >
+                  <svg className="send-icon" viewBox="0 0 24 24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </>
+        )}
       </div>
     </>
   )
