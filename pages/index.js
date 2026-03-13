@@ -9,54 +9,104 @@ export default function Home() {
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const chatEndRef = useRef(null)
+  const inputRef = useRef(null)
 
   // Auto scroll ke pesan terbaru
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // Fungsi untuk mendapatkan respons AI (simulasi dulu)
-  const getAIResponse = async (userMessage) => {
-  try {
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyDqpzPrzX_22v6gPtysMv9H9foAQB633G0', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: userMessage
-          }]
-        }]
-      })
-    })
+  // Focus ke input saat chat dibuka
+  useEffect(() => {
+    if (isChatOpen) {
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 300)
+    }
+  }, [isChatOpen])
 
-    const data = await response.json()
-    return data.candidates[0].content.parts[0].text
-  } catch (error) {
-    console.error('Error:', error)
-    return 'Maaf, terjadi kesalahan. Silakan coba lagi.'
+  // Fungsi untuk mendapatkan respons AI dari Gemini
+  const getAIResponse = async (userMessage) => {
+    const API_KEY = 'AIzaSyDqpzPrzX_22v6gPtysMv9H9foAQB633G0'
+    
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: userMessage
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 800,
+          }
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('API Error:', errorData)
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      
+      // Cek struktur response Gemini
+      if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+        return data.candidates[0].content.parts[0].text
+      } else {
+        console.error('Unexpected API response:', data)
+        return 'Maaf, format respons tidak sesuai.'
+      }
+    } catch (error) {
+      console.error('Error detail:', error)
+      
+      // Fallback response jika API error
+      return 'Maaf, sedang mengalami gangguan koneksi. Silakan coba lagi nanti.'
+    }
   }
-}
 
   const handleSendMessage = async (e) => {
-    e?.preventDefault()
-    if (!inputMessage.trim() || isLoading) return
+    e.preventDefault()
+    
+    const message = inputMessage.trim()
+    if (!message || isLoading) return
 
     // Tambah pesan user
-    const userMessage = inputMessage
-    setMessages(prev => [...prev, { text: userMessage, isUser: true }])
+    setMessages(prev => [...prev, { text: message, isUser: true }])
     setInputMessage('')
     setIsLoading(true)
 
-    // Dapatkan respons AI
-    const aiResponse = await getAIResponse(userMessage)
-    
-    // Tambah respons AI
-    setMessages(prev => [...prev, { text: aiResponse, isUser: false }])
-    setIsLoading(false)
+    try {
+      // Dapatkan respons AI
+      const aiResponse = await getAIResponse(message)
+      
+      // Tambah respons AI
+      setMessages(prev => [...prev, { text: aiResponse, isUser: false }])
+    } catch (error) {
+      console.error('Error:', error)
+      setMessages(prev => [...prev, { text: 'Maaf, terjadi kesalahan. Silakan coba lagi.', isUser: false }])
+    } finally {
+      setIsLoading(false)
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 100)
+    }
   }
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSendMessage(e)
+    }
+  }
+
+  // ... (semua style dan JSX tetap sama seperti sebelumnya, hanya fungsi getAIResponse yang diubah)
 
   return (
     <>
@@ -377,6 +427,7 @@ export default function Home() {
           flex-direction: column;
           overflow: hidden;
           animation: slideIn 0.3s ease;
+          z-index: 1001;
         }
 
         @keyframes slideIn {
@@ -435,6 +486,12 @@ export default function Home() {
           gap: 10px;
         }
 
+        .message-wrapper {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+        }
+
         .message {
           max-width: 80%;
           padding: 10px 15px;
@@ -481,19 +538,19 @@ export default function Home() {
 
         .chat-input {
           flex: 1;
-          padding: 10px;
-          border: 1px solid #333;
-          border-radius: 20px;
+          padding: 12px 15px;
+          border: 2px solid #333;
+          border-radius: 25px;
           background: #222;
           color: #fff;
           font-size: 14px;
           outline: none;
-          transition: 0.3s;
+          transition: all 0.3s ease;
         }
 
         .chat-input:focus {
           border-color: #00ff00;
-          box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+          box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
         }
 
         .chat-input:disabled {
@@ -502,8 +559,8 @@ export default function Home() {
         }
 
         .send-button {
-          width: 40px;
-          height: 40px;
+          width: 45px;
+          height: 45px;
           border-radius: 50%;
           background: #00ff00;
           border: none;
@@ -511,12 +568,12 @@ export default function Home() {
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: 0.3s;
+          transition: all 0.3s ease;
         }
 
         .send-button:hover:not(:disabled) {
           transform: scale(1.1);
-          box-shadow: 0 0 15px #00ff00;
+          box-shadow: 0 0 20px #00ff00;
         }
 
         .send-button:disabled {
@@ -533,11 +590,12 @@ export default function Home() {
         .typing-indicator {
           display: flex;
           gap: 5px;
-          padding: 10px 15px;
+          padding: 12px 18px;
           background: #222;
-          border-radius: 15px;
+          border-radius: 20px;
           align-self: flex-start;
           border: 1px solid #00ff00;
+          margin-bottom: 10px;
         }
 
         .typing-indicator span {
@@ -569,12 +627,15 @@ export default function Home() {
           font-size: 10px;
           color: #666;
           margin-top: 5px;
+          margin-bottom: 5px;
+        }
+
+        .user-message + .message-time {
           text-align: right;
         }
 
-        .bot-message .message-time {
-          color: #00ff00;
-          opacity: 0.7;
+        .bot-message + .message-time {
+          text-align: left;
         }
 
         /* Overlay untuk mobile */
@@ -584,8 +645,8 @@ export default function Home() {
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0, 0, 0, 0.5);
-          z-index: 999;
+          background: rgba(0, 0, 0, 0.7);
+          z-index: 1000;
           display: none;
         }
 
@@ -596,10 +657,16 @@ export default function Home() {
             bottom: 0;
             right: 0;
             border-radius: 0;
+            border: none;
           }
           
           .chat-overlay {
             display: block;
+          }
+          
+          .chat-widget {
+            bottom: 10px;
+            right: 10px;
           }
         }
       `}</style>
@@ -639,7 +706,6 @@ export default function Home() {
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = 'https://via.placeholder.com/320x300?text=Banner+PrediktorAI';
-              e.target.style.objectFit = 'contain';
             }}
           />
         </div>
@@ -720,7 +786,7 @@ export default function Home() {
 
               <div className="chat-messages">
                 {messages.map((msg, index) => (
-                  <div key={index}>
+                  <div key={index} className="message-wrapper">
                     <div className={`message ${msg.isUser ? 'user-message' : 'bot-message'}`}>
                       {msg.text}
                     </div>
@@ -741,12 +807,15 @@ export default function Home() {
 
               <form className="chat-input-form" onSubmit={handleSendMessage}>
                 <input
+                  ref={inputRef}
                   type="text"
                   className="chat-input"
                   placeholder="Ketik pesan..."
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
                   disabled={isLoading}
+                  autoComplete="off"
                 />
                 <button 
                   type="submit" 
